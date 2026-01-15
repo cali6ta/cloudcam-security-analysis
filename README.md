@@ -40,13 +40,13 @@ For the initial RTSP check, an attempt was made to connect to the service withou
 
 `vlc rtsp://192.168.0.149`
 
-![vlc out] (poc/screenshots/vlc.png)
+![vlc out](poc/screenshots/vlc.png)
 
 VLC did not return an explicit error, but the video stream did not play. For a lower-level check, an RTSP `DESCRIBE` request was sent directly:
 
 `printf "DESCRIBE rtsp://192.168.0.149:554/ RTSP/1.0\r\nCSeq: 1\r\n\r\n" | nc 192.168.0.149 554`
 
-![DESCRIBE] (poc/screenshots/printf_DESCRIBE.png)
+![DESCRIBE](poc/screenshots/printf_DESCRIBE.png)
 
 The server returned a response:
 
@@ -60,19 +60,19 @@ After this, a test was performed using `ffmpeg`:
 
 `ffmpeg -rtsp_transport tcp -i rtsp://192.168.0.149:554/ -t 10 -f null -`
 
-![ffmpeg test] (poc/screenshots/ffmpeg_test.png)
+![ffmpeg test](poc/screenshots/ffmpeg_test.png)
 
-The command successfully started receiving the video stream, indicating that there is no authentication check at the RTSP server level for the default stream.** This means that any client on the local network can access the video stream without knowing the credentials.
+The command successfully started receiving the video stream, indicating that there is no authentication check at the RTSP server level for the default stream. This means that any client on the local network can access the video stream without knowing the credentials.
 
 `ffplay` was used for verification:
 
 `ffplay -rtsp_transport tcp -i rtsp://192.168.0.149:554/`
 
-![ffplay non auth] (poc/screenshots/ffplay_rtsp.png)
+![ffplay non auth](poc/screenshots/ffplay_rtsp.png)
 
 This resulted in a live camera stream, without specifying the stream profile path and without authentication:
 
-![non auth stream] (poc/screenshots/no_auth_rtsp_stream.png)
+![non auth stream](poc/screenshots/no_auth_rtsp_stream.png)
 
 ## HTTP and ONVIF Analysis
 
@@ -80,7 +80,7 @@ Next, the HTTP service on port 80 was examined:
 
 `curl -v http://192.168.0.149/`
 
-![curl test] (poc/screenshots/curl_test.png)
+![curl test](poc/screenshots/curl_test.png)
 
 The server returns an HTTP redirect (302) to `/index.asp`. However, when attempting to access this path through a browser, the connection is reset. Despite the presence of an HTTP service, there is no full-fledged web interface for the user.
 
@@ -88,7 +88,7 @@ Next, the ONVIF endpoint was checked:
 
 `curl -v http://192.168.0.149/onvif`
 
-![curl onvif] (poc/screenshots/curl_test_onvif.png)
+![curl onvif](poc/screenshots/curl_test_onvif.png)
 
 The server returned a response with the code `401 Unauthorized` and the header:
 
@@ -102,7 +102,7 @@ The default credentials `admin:admin` were used for verification.
 
 The `GetStreamUri` SOAP request (the request body is stored in the getstream.xml file) with a non-existent `ProfileToken` (Profile_00) returned the error `NoProfile`:
 
-![bad profile] (poc/screenshots/curl_def_cred_bad_profile.png)
+![bad profile](poc/screenshots/curl_def_cred_bad_profile.png)
 
 - ONVIF service is working correctly
 
@@ -114,7 +114,7 @@ Using the default `admin:admin` credentials without forcing a password change is
 
 To retrieve the correct profiles, a `GetProfiles` request was executed (file with XML body getprofiles.xml), which found two media profiles:
 
-![successfully found profiles] (poc/screenshots/curl_def_cred_succes.png)
+![successfully found profiles](poc/screenshots/curl_def_cred_succes.png)
 (The full response can be seen in the file getprofiles.txt)
 
 |   Name   |   Token   |      Purpose          |
@@ -126,9 +126,9 @@ After substituting the correct `ProfileToken` into the `GetStreamUri` request, t
 
 `rtsp://192.168.0.149:554/0/av0`
 
-![stream av0] (poc/screenshots/ffplay_rtsp_av0.png)
+![stream av0](poc/screenshots/ffplay_rtsp_av0.png)
 
-![stream path info] (poc/screenshots/stream_with_path_info.png)
+![stream path info](poc/screenshots/stream_with_path_info.png)
 ## Analyzing the received RTSP URI
 
 The received RTSP URI has the following properties:
@@ -153,7 +153,7 @@ Control check:
 
 `ffplay rtsp://192.168.0.149:554/0/av1`
 
-![stream av1] (poc/screenshots/ffplay_av1_profile.png)
+![stream av1](poc/screenshots/ffplay_av1_profile.png)
 
 The connection was successful, the video stream is available in real time.
 
