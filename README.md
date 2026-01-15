@@ -131,7 +131,33 @@ Control check:
 
 The connection was successful, the video stream is available in real time.
 
-## Summary
+## Vulnerability Details
+
+### Impact
+- Unauthorized access to live video streams from the local network.
+- Persistent RTSP URIs allow continuous monitoring without authentication.
+- Default ONVIF credentials significantly lower the barrier to full device compromise.
+- The vulnerability affects privacy and may expose audio/video surveillance data.
+
+### Root Cause
+- The RTSP service does not enforce authentication for the default media stream.
+- ONVIF service accepts factory default credentials (`admin:admin`) without requiring a password change.
+- The firmware exposes permanent RTSP URIs that are not bound to a session, user, or timeout.
+- The device firmware provides **no user-accessible mechanism** to configure RTSP, secure ONVIF, or change authentication behavior.
+
+### Mitigation
+Due to the closed nature of the firmware and the absence of official configuration options, **the end user cannot fully mitigate these issues at the device level**.
+
+Possible partial mitigations include:
+
+- Isolating the camera in a separate VLAN or guest network.
+- Blocking RTSP (554/tcp, 8001/tcp) and HTTP (80/tcp) access using firewall rules.
+- Restricting camera access to the mobile application’s backend only.
+- Avoiding exposure of the device beyond the local network.
+
+**Note:** A proper fix requires a firmware update from the manufacturer, enforcing authentication and secure defaults. In practice, such updates are often unavailable for low-cost OEM devices, leaving users permanently exposed.
+
+## Conclusion
 
 The research revealed the following:
 
