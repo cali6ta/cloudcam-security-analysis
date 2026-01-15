@@ -20,6 +20,8 @@ These issues are common in OEM/ODM devices and may affect multiple rebranded pro
 ## Attack Surface Discovery
 After determining the camera's IP address on the local network, a basic port scan was performed using Available Network Services.
 
+![nmap scan](poc/screenshots/nmap.png)
+
 This revealed the following open ports:
 
 - **554/tcp** — RTSP
